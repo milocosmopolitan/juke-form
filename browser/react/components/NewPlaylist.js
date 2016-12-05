@@ -5,6 +5,10 @@ const NewPlaylist = function (props) {
 
 	return (
 	<div className="well">
+		{props.errorMessage.length ?
+			<div className="alert alert-warning">{props.errorMessage}</div>
+			: null
+		}	  
 	  <form className="form-horizontal" onSubmit={props.createPlaylist}>
 	    <fieldset>
 	      <legend>New Playlist</legend>
@@ -16,7 +20,9 @@ const NewPlaylist = function (props) {
 	      </div>
 	      <div className="form-group">
 	        <div className="col-xs-10 col-xs-offset-2">
-	          <button disabled={props.invalid} type="submit" className="btn btn-success" >Create Playlist</button>
+	          <button 
+	          	disabled={!props.value.length || props.value.length > 16 } 
+	          	type="submit" className="btn btn-success" >Create Playlist</button>
 	        </div>
 	      </div>
 	    </fieldset>

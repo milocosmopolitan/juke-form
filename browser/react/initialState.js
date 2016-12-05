@@ -1,6 +1,9 @@
 const initialState = {
   albums: [],
   artists: [],
+  playlists: [],
+  newPlaylistName: '',
+  errorMessage: '',
   selectedAlbum: {},
   selectedArtist: {},
   currentSong: {},

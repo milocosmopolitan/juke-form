@@ -21,8 +21,10 @@ export default class AppContainer extends Component {
     this.toggleOne = this.toggleOne.bind(this);
     this.next = this.next.bind(this);
     this.prev = this.prev.bind(this);
+    this.namePlaylist = this.namePlaylist.bind(this);
     this.selectAlbum = this.selectAlbum.bind(this);
     this.selectArtist = this.selectArtist.bind(this);
+    this.createPlaylist = this.createPlaylist.bind(this);
   }
 
   componentDidMount () {
@@ -30,7 +32,8 @@ export default class AppContainer extends Component {
     Promise
       .all([
         axios.get('/api/albums/'),
-        axios.get('/api/artists/')
+        axios.get('/api/artists/'),
+        axios.get('/api/playlists/')
       ])
       .then(res => res.map(r => r.data))
       .then(data => this.onLoad(...data));
@@ -41,10 +44,11 @@ export default class AppContainer extends Component {
       this.setProgress(AUDIO.currentTime / AUDIO.duration));
   }
 
-  onLoad (albums, artists) {
+  onLoad (albums, artists, playlists) {
     this.setState({
       albums: convertAlbums(albums),
-      artists: artists
+      artists: artists,
+      playlists: playlists
     });
   }
 
@@ -124,19 +128,44 @@ export default class AppContainer extends Component {
     this.setState({ selectedArtist: artist });
   }
 
+  warningMessage (message){   
+    this.setState({errorMessage: message})
+  }
+  namePlaylist (event) {
+    this.setState({ newPlaylistName: event.target.value })
+    if(event.target.value === '') this.warningMessage('input is empty');
+    if(event.target.value.length > 16) this.warningMessage('character exceed 16');    
+  }  
+  createPlaylist (event) {
+    event.preventDefault();
+    axios.post(`/api/playlists`, {
+      name: this.state.newPlaylistName
+    })
+    .then(res => res.data)
+    .then((newPlaylist) => {
+      console.log(newPlaylist)
+      this.setState((state, params)=>({       
+        newPlaylistName: '',
+        playlists: [...state.playlists, newPlaylist]
+      }))
+    })
+  }
+
   render () {
 
     const props = Object.assign({}, this.state, {
       toggleOne: this.toggleOne,
       toggle: this.toggle,
       selectAlbum: this.selectAlbum,
-      selectArtist: this.selectArtist
+      selectArtist: this.selectArtist,
+      namePlaylist: this.namePlaylist,
+      createPlaylist: this.createPlaylist
     });
 
     return (
       <div id="main" className="container-fluid">
         <div className="col-xs-2">
-          <Sidebar />
+          <Sidebar playlists={this.state.playlists} />
         </div>
         <div className="col-xs-10">
         {
