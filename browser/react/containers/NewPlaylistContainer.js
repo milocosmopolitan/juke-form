@@ -5,11 +5,13 @@ import axios from 'axios';
 const NewPlaylistContainer = function(props){
 	
 		return (
+		
 			<NewPlaylist 
 				errorMessage = {props.errorMessage}
 				value={props.newPlaylistName} 
 				nameInput={ props.namePlaylist } 
 				createPlaylist = { props.createPlaylist } />
+		
 		)
 	
 	// warningMessage (message){		
